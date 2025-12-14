@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aqua Specialist – Supervisor Checklist</title>
+<style>
+body { font-family: Arial, sans-serif; background:#ffffff; padding:15px; margin:auto; max-width:720px; color:#000; }
+.section { background:#fff; border:2px solid #000; padding:18px; border-radius:10px; margin-bottom:22px; }
+h1,h2 { color:#000; font-weight:700; }
+button { background:#00a3ff; color:#fff; padding:12px 20px; border:none; border-radius:6px; font-size:16px; font-weight:bold; cursor:pointer; box-shadow:0 3px 6px rgba(0,0,0,0.4); }
+input[type='text'], input[type='number'], input[type='password'] { width:100%; padding:10px; border:2px solid #000; border-radius:6px; margin-top:5px; }
+.errorField { border:2px solid red !important; background:#ffe5e5 !important; }
+nav { background:#000; color:#fff; padding:12px; font-weight:bold; border-radius:6px; margin-bottom:15px; display:flex; justify-content:space-between; }
+.summaryBox { text-align:center; font-size:16px; font-weight:bold; color:#004b75; margin-bottom:18px; }
+#confirmPopup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; }
+#confirmBox { background:white; padding:25px; border-radius:10px; width:80%; max-width:320px; margin:120px auto; text-align:center; }
+</style>
+</head>
+<body>
+<div id="loginBox" style="text-align:center;padding:20px;">
+  <h2>Supervisor Login</h2>
+  <input id="loginUser" placeholder="Username">
+  <input id="loginPass" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+<div id="mainForm" style="display:none;">
+<div style='text-align:center;margin-bottom:20px;'>
+  <img src='https://via.placeholder.com/200x80?text=AQUA+SPECIALIST' style='width:200px;'>
+</div>
+<div id="sessionInfo" class="summaryBox"></div>
+<nav>
+  <span>Aqua Specialist – Cheval Blanc</span>
+  <span id="adminMenu" style="display:none;cursor:pointer;" onclick="openAdminPanel()">Admin</span>
+</nav>
+<div class="section">
+  <h2>1. Staff & Grooming</h2>
+  <label><input type="checkbox" data-id="uniform"> Uniform Check</label>
+  <label><input type="checkbox" data-id="grooming"> Staff Grooming Verified</label>
+  <label><input type="checkbox" data-id="wellgroomed"> All Staff Well-Groomed</label>
+  <label>Staff on Duty:<input data-id="staffOnDuty" type="text"></label>
+</div>
+<div class="section">
+  <h2>2. Assigned Pools</h2>
+  <label><input type="checkbox" data-id="assignConfirm"> Assignments Confirmed</label>
+  <label><input type="text" placeholder="E.g.: Jadel – Sula Pool" data-id="assignText"></label>
+</div>
+<div class="section">
+  <h2>3. Main Area Check</h2>
+  <label><input type="checkbox" data-id="area-sula"> Sula Pool</label>
+  <label><input type="checkbox" data-id="area-cabana"> Cabana Pool</label>
+  <label><input type="checkbox" data-id="area-vivamento"> Vivamento</label>
+  <label><input type="checkbox" data-id="area-pond"> Main Pond</label>
+  <label><input type="checkbox" data-id="area-kids"> Kids/Gym Pool</label>
+</div>
+<div class="section">
+  <h2>4. Water Test</h2>
+  <div id="waterTests"></div>
+</div>
+<div class="section">
+  <h2>5. Random Villa Checks (10 Villas)</h2>
+  <div id="villaContainer"></div>
+</div>
+<div class="section">
+  <h2>6. Pump Room Summary</h2>
+  <label><input type="checkbox" data-id="pumpClean"> All Pump Rooms Clean</label>
+  <label>Issues:<input type="text" data-id="pumpIssues"></label>
+</div>
+<div class="section">
+  <h2>7. Remarks</h2>
+  <input type="text" data-id="remarks" placeholder="Enter remarks">
+</div>
+<div class="section">
+  <button onclick="openConfirm()" id="submitBtn">Submit Checklist</button>
+</div>
+</div>
+<div id="adminPanel" style="display:none;background:#fff;padding:20px;border-radius:10px;border:2px solid #000;">
+  <h2>Admin Panel</h2>
+  <input id="newUser" placeholder="New Username">
+  <input id="newPass" placeholder="New Password">
+  <button onclick="addUser()">Add User</button>
+  <h3>Supervisor List</h3>
+  <ul id="userList"></ul>
+  <button onclick="closeAdminPanel()" style="background:red;">Close</button>
+</div>
+<div id="loadingScreen" style="display:none;text-align:center;padding:20px;font-size:20px;color:#004b75;">Submitting… Please wait.</div>
+<div id="successScreen" style="display:none;text-align:center;padding:20px;font-size:20px;color:green;">
+  Report submitted successfully!<br><br>
+  <button id="viewPdfBtn" style="display:none;background:#000;color:#fff;padding:10px 20px;border-radius:6px;" onclick="window.open(window.lastPdfUrl,'_blank')">View PDF</button><br><br>
+  <button onclick="location.reload()">Start New Checklist</button>
+</div>
+<div id="confirmPopup"><div id="confirmBox"><h3>Submit Report?</h3><p>Are you sure you want to submit?</p><button onclick="confirmSubmit()">YES</button><button onclick="closeConfirm()" style="background:red;">Cancel</button></div></div>
+
+<script>
+/*************************************************
+ CLEAN COMPLETE JAVASCRIPT (FULL REBUILD)
+*************************************************/
+
+window.onbeforeunload = () => "Unsaved changes";
+window.loggedInUser = "";
+
+/*****************
+ LOGIN SYSTEM
+*****************/
+function login(){
+  const user = document.getElementById("loginUser").value.trim();
+  const pass = document.getElementById("loginPass").value.trim();
+
+  let users = JSON.parse(localStorage.getItem("supervisors") || "{}");
+
+  if(user === "admin" && pass === "AquaAdmin2025"){
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("mainForm").style.display="none";
+    enableAdminMenu();
+    loadUsers();
+    document.getElementById("adminPanel").style.display="block";
+    return;
+  }
+
+  if(users[user] && users[user] === pass){
+    window.loggedInUser = user;
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("mainForm").style.display="block";
+    initSession();
+    return;
+  }
+
+  alert("Incorrect username or password");
+}
+
+function enableAdminMenu(){ document.getElementById("adminMenu").style.display = "block"; }
+function openAdminPanel(){ document.getElementById("adminPanel").style.display = "block"; }
+function closeAdminPanel(){ document.getElementById("adminPanel").style.display = "none"; }
+
+function loadUsers(){
+  let users = JSON.parse(localStorage.getItem("supervisors") || "{}");
+  let ul = document.getElementById("userList");
+  ul.innerHTML = "";
+  for(let k in users){ ul.innerHTML += `<li>${k} <button onclick=\"delUser('${k}')\">Remove</button></li>`; }
+}
+function addUser(){
+  let u=document.getElementById("newUser").value.trim();
+  let p=document.getElementById("newPass").value.trim();
+  if(!u||!p)return alert("Enter both fields");
+  let users=JSON.parse(localStorage.getItem("supervisors")||"{}");
+  users[u]=p;
+  localStorage.setItem("supervisors",JSON.stringify(users));
+  loadUsers();
+}
+function delUser(x){
+  let users=JSON.parse(localStorage.getItem("supervisors")||"{}");
+  delete users[x];
+  localStorage.setItem("supervisors",JSON.stringify(users));
+  loadUsers();
+}
+
+/*****************
+ SESSION START
+*****************/
+function initSession(){
+  let t=new Date().toLocaleString("en-GB",{hour12:false});
+  document.getElementById("sessionInfo").innerText=`Supervisor: ${window.loggedInUser} | Started: ${t}`;
+  generateWaterTests();
+  generateVillas();
+}
+
+/*****************
+ WATER TEST
+*****************/
+function generateWaterTests(){
+  const areas=["Sula","Cabana","Vivamento","MainPond","KidsGym"];
+  let box=document.getElementById("waterTests");
+  box.innerHTML="";
+  areas.forEach(a=>{
+    box.innerHTML+=`
+      <label>${a} – pH<input data-id="${a}-ph" type="number"></label>
+      <label>${a} – Chlorine<input data-id="${a}-cl" type="number"></label>
+      <label>${a} – Issue<input data-id="${a}-issue" type="text"></label>
+      <hr>
+    `;
+  });
+}
+
+/*****************
+ VILLAS
+*****************/
+function generateVillas(){
+  let wrap=document.getElementById("villaContainer");
+  wrap.innerHTML="";
+  for(let i=1;i<=10;i++){
+    wrap.innerHTML+=`
+      <div id='villaBlock${i}' style="border:2px solid #000;padding:12px;border-radius:8px;margin-bottom:15px;">
+        <h3>Villa #${i}</h3>
+        <label>Villa Number:<input id='villaNum${i}' type='text'></label>
+        <label><input id='villaPump${i}' type='checkbox'> Pump Room Clean</label>
+        <label><input id='villaClean${i}' type='checkbox'> Cleaning Verified</label>
+        <label>Photos:<input id='villaPhoto${i}' type='file' accept='image/*' multiple></label>
+      </div>`;
+  }
+}
+
+/*****************
+ CONFIRM POPUP
+*****************/
+function openConfirm(){ document.getElementById("confirmPopup").style.display='block'; }
+function closeConfirm(){ document.getElementById("confirmPopup").style.display='none'; }
+async function confirmSubmit(){ closeConfirm(); document.getElementById("loadingScreen").style.display='block'; await sendChecklist(); }
+
+/*****************
+ VALIDATION
+*****************/
+function validateGeneral(){ let ok=true; let el=document.querySelector('[data-id="staffOnDuty"]'); if(!el.value.trim()){el.classList.add('errorField'); ok=false;} return ok; }
+function validateWater(){ let ok=true; document.querySelectorAll("input[data-id$='-ph'],input[data-id$='-cl']").forEach(e=>{ if(!e.value.trim()){e.classList.add('errorField'); ok=false;} else e.classList.remove('errorField');}); return ok; }
+function validateVillas(){ let ok=true; for(let i=1;i<=10;i++){ let pump=document.getElementById(`villaPump${i}`).checked; let clean=document.getElementById(`villaClean${i}`).checked; let photos=document.getElementById(`villaPhoto${i}`).files; let blk=document.getElementById(`villaBlock${i}`); if((pump||clean)&&photos.length===0){ blk.style.border='2px solid red'; ok=false;} else blk.style.border='2px solid #000'; } return ok; }
+
+/*****************
+ BASE64
+*****************/
+function toBase64(file){ return new Promise((resolve)=>{ let r=new FileReader(); r.onload=()=>resolve(r.result); r.readAsDataURL(file);}); }
+
+/*****************
+ SUBMIT
+*****************/
+async function sendChecklist(){
+ if(!validateGeneral() || !validateWater() || !validateVillas()){ alert("Fix highlighted fields"); document.getElementById('loadingScreen').style.display='none'; return; }
+
+ let data={ timestamp:new Date().toISOString(), supervisor:window.loggedInUser, remarks:document.querySelector('[data-id="remarks"]').value, mainAreas:{ sula:document.querySelector('[data-id="area-sula"]').checked, cabana:document.querySelector('[data-id="area-cabana"]').checked, vivamento:document.querySelector('[data-id="area-vivamento"]').checked, mainPond:document.querySelector('[data-id="area-pond"]').checked, kidsGym:document.querySelector('[data-id="area-kids"]').checked }};
+
+ // water results
+ ['Sula','Cabana','Vivamento','MainPond','KidsGym'].forEach(a=>{ data[a]={ ph:document.querySelector(`[data-id='${a}-ph']`).value, cl:document.querySelector(`[data-id='${a}-cl']`).value, issue:document.querySelector(`[data-id='${a}-issue']`).value}; });
+
+ // villas
+ for(let i=1;i<=10;i++){
+   data[`villaNum${i}`] = document.getElementById(`villaNum${i}`).value;
+   data[`villaPump${i}`] = document.getElementById(`villaPump${i}`).checked;
+   data[`villaClean${i}`] = document.getElementById(`villaClean${i}`).checked;
+
+   let files = document.getElementById(`villaPhoto${i}`).files;
+   data[`villaPhoto${i}`] = [];
+   for(const f of files){
+     let b64 = await toBase64(f);
+     data[`villaPhoto${i}`].push({name:f.name, type:f.type, data:b64.split(',')[1]});
+   }
+ }
+
+ // ⭐ SEND TO GOOGLE APPS SCRIPT
+ const endpoint = "https://script.google.com/macros/s/AKfycbxL2FSk9zlq9GPxTKK3iHFUhHKRdAtXKj5iFkuKsuwNuxs5ZMmkzTMO3bgFYTdZgfnS/exec"; // <-- Replace this
+ let res = await fetch(endpoint, { method:'POST', body:JSON.stringify(data) });
+ let result = await res.json();
+
+ document.getElementById('loadingScreen').style.display='none';
+
+ if(result.status==='success'){
+   window.lastPdfUrl = result.pdfUrl;
+   document.getElementById('viewPdfBtn').style.display='inline-block';
+   document.getElementById('mainForm').style.display='none';
+   document.getElementById('successScreen').style.display='block';
+ } else {
+   alert('Error submitting report: ' + result.message);
+ }
+}
+</script>
