@@ -104,78 +104,139 @@ nav {
   <button onclick="login()">Login</button>
 </div>
 
+<!-- MAIN FORM -->
 <div id="mainForm" style="display:none;">
+
+<!-- LOGO ON TOP OF MAIN FORM -->
 <div style='text-align:center;margin-bottom:20px;'>
   <img src='https://via.placeholder.com/200x80?text=AQUA+SPECIALIST' style='width:200px;'>
 </div>
+
 <div id="sessionInfo" class="summaryBox"></div>
+
 <nav>
   <span>Aqua Specialist – Cheval Blanc</span>
   <span id="adminMenu" style="display:none;cursor:pointer;" onclick="openAdminPanel()">Admin</span>
 </nav>
+
+<!-- 1. STAFF & GROOMING -->
 <div class="section">
   <h2>1. Staff & Grooming</h2>
-  <label><input type="checkbox" data-id="uniform"> Uniform Check</label>
-  <label><input type="checkbox" data-id="grooming"> Staff Grooming Verified</label>
-  <label><input type="checkbox" data-id="wellgroomed"> All Staff Well-Groomed</label>
+  <label><input type="checkbox" data-id="uniform"> Uniform Check</label><br>
+  <label><input type="checkbox" data-id="grooming"> Staff Grooming Verified</label><br>
+  <label><input type="checkbox" data-id="wellgroomed"> All Staff Well-Groomed</label><br>
   <label>Staff on Duty:<input data-id="staffOnDuty" type="text"></label>
 </div>
+
+
+<!-- 2. ASSIGNMENTS -->
 <div class="section">
   <h2>2. Assigned Pools</h2>
   <label><input type="checkbox" data-id="assignConfirm"> Assignments Confirmed</label>
   <label><input type="text" placeholder="E.g.: Jadel – Sula Pool" data-id="assignText"></label>
 </div>
+
+
+<!-- 3. MAIN AREA CHECK + PHOTO -->
 <div class="section">
   <h2>3. Main Area Check</h2>
+
   <label><input type="checkbox" data-id="area-sula"> Sula Pool</label>
+  <label>Sula Photo:<input id="sulaPhoto" type="file" accept="image/*"></label>
+  <hr>
+
   <label><input type="checkbox" data-id="area-cabana"> Cabana Pool</label>
+  <label>Cabana Photo:<input id="cabanaPhoto" type="file" accept="image/*"></label>
+  <hr>
+
   <label><input type="checkbox" data-id="area-vivamento"> Vivamento</label>
+  <label>Vivamento Photo:<input id="vivamentoPhoto" type="file" accept="image/*"></label>
+  <hr>
+
   <label><input type="checkbox" data-id="area-pond"> Main Pond</label>
+  <label>Pond Photo:<input id="pondPhoto" type="file" accept="image/*"></label>
+  <hr>
+
   <label><input type="checkbox" data-id="area-kids"> Kids/Gym Pool</label>
+  <label>Kids/Gym Photo:<input id="kidsPhoto" type="file" accept="image/*"></label>
+
 </div>
+
+
+<!-- 4. WATER TEST SECTION -->
 <div class="section">
-  <h2>4. Water Test</h2>
+  <h2>4. Water Tests</h2>
   <div id="waterTests"></div>
 </div>
+
+
+<!-- 5. RANDOM VILLAS (10) -->
 <div class="section">
   <h2>5. Random Villa Checks (10 Villas)</h2>
   <div id="villaContainer"></div>
 </div>
+
+
+<!-- 6. REMARKS -->
 <div class="section">
-  <h2>6. Pump Room Summary</h2>
-  <label><input type="checkbox" data-id="pumpClean"> All Pump Rooms Clean</label>
-  <label>Issues:<input type="text" data-id="pumpIssues"></label>
-</div>
-<div class="section">
-  <h2>7. Remarks</h2>
+  <h2>6. Remarks</h2>
   <input type="text" data-id="remarks" placeholder="Enter remarks">
 </div>
+
+
+<!-- SUBMIT BUTTON -->
 <div class="section">
   <button onclick="openConfirm()" id="submitBtn">Submit Checklist</button>
 </div>
-</div>
-<div id="adminPanel" style="display:none;background:#fff;padding:20px;border-radius:10px;border:2px solid #000;">
+
+</div> <!-- END MAIN FORM -->
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" style="display:none;background:#fff;padding:20px;border-radius:10px;border:2px solid #00A3FF;">
   <h2>Admin Panel</h2>
+
   <input id="newUser" placeholder="New Username">
   <input id="newPass" placeholder="New Password">
+
   <button onclick="addUser()">Add User</button>
+
   <h3>Supervisor List</h3>
   <ul id="userList"></ul>
+
   <button onclick="closeAdminPanel()" style="background:red;">Close</button>
 </div>
-<div id="loadingScreen" style="display:none;text-align:center;padding:20px;font-size:20px;color:#004b75;">Submitting… Please wait.</div>
+
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen" style="display:none;text-align:center;padding:20px;font-size:20px;color:#004B75;">
+  Submitting… Please wait.
+</div>
+
+
+<!-- SUCCESS SCREEN -->
 <div id="successScreen" style="display:none;text-align:center;padding:20px;font-size:20px;color:green;">
   Report submitted successfully!<br><br>
-  <button id="viewPdfBtn" style="display:none;background:#000;color:#fff;padding:10px 20px;border-radius:6px;" onclick="window.open(window.lastPdfUrl,'_blank')">View PDF</button><br><br>
+
+  <button id="viewPdfBtn" style="display:none;background:#000;color:#fff;padding:10px 20px;border-radius:6px;" 
+  onclick="window.open(window.lastPdfUrl,'_blank')">View PDF</button><br><br>
+
   <button onclick="location.reload()">Start New Checklist</button>
 </div>
-<div id="confirmPopup"><div id="confirmBox"><h3>Submit Report?</h3><p>Are you sure you want to submit?</p><button onclick="confirmSubmit()">YES</button><button onclick="closeConfirm()" style="background:red;">Cancel</button></div></div>
 
+
+<!-- CONFIRM POPUP -->
+<div id="confirmPopup">
+  <div id="confirmBox">
+    <h3>Submit Report?</h3>
+    <p>Are you sure you want to submit?</p>
+    <button onclick="confirmSubmit()">YES</button>
+    <button onclick="closeConfirm()" style="background:red;">Cancel</button>
+  </div>
+</div>
+
+
+<!-- JAVASCRIPT -->
 <script>
-/*************************************************
- CLEAN COMPLETE JAVASCRIPT (FULL REBUILD)
-*************************************************/
-
 window.onbeforeunload = () => "Unsaved changes";
 window.loggedInUser = "";
 
@@ -188,6 +249,7 @@ function login(){
 
   let users = JSON.parse(localStorage.getItem("supervisors") || "{}");
 
+  // ADMIN LOGIN
   if(user === "admin" && pass === "AquaAdmin2025"){
     document.getElementById("loginBox").style.display="none";
     document.getElementById("mainForm").style.display="none";
@@ -197,6 +259,7 @@ function login(){
     return;
   }
 
+  // SUPERVISOR LOGIN
   if(users[user] && users[user] === pass){
     window.loggedInUser = user;
     document.getElementById("loginBox").style.display="none";
@@ -212,47 +275,61 @@ function enableAdminMenu(){ document.getElementById("adminMenu").style.display =
 function openAdminPanel(){ document.getElementById("adminPanel").style.display = "block"; }
 function closeAdminPanel(){ document.getElementById("adminPanel").style.display = "none"; }
 
+
+/*****************
+ ADMIN – USER MGMT
+*****************/
 function loadUsers(){
   let users = JSON.parse(localStorage.getItem("supervisors") || "{}");
   let ul = document.getElementById("userList");
   ul.innerHTML = "";
-  for(let k in users){ ul.innerHTML += `<li>${k} <button onclick=\"delUser('${k}')\">Remove</button></li>`; }
+  for(let k in users){
+    ul.innerHTML += `<li>${k} <button onclick="delUser('${k}')" style="margin-left:10px;">Remove</button></li>`;
+  }
 }
+
 function addUser(){
-  let u=document.getElementById("newUser").value.trim();
-  let p=document.getElementById("newPass").value.trim();
-  if(!u||!p)return alert("Enter both fields");
-  let users=JSON.parse(localStorage.getItem("supervisors")||"{}");
-  users[u]=p;
-  localStorage.setItem("supervisors",JSON.stringify(users));
+  let u = document.getElementById("newUser").value.trim();
+  let p = document.getElementById("newPass").value.trim();
+  if(!u || !p){ alert("Enter both fields"); return; }
+
+  let users = JSON.parse(localStorage.getItem("supervisors") || "{}");
+  users[u] = p;
+  localStorage.setItem("supervisors", JSON.stringify(users));
   loadUsers();
 }
+
 function delUser(x){
-  let users=JSON.parse(localStorage.getItem("supervisors")||"{}");
+  let users = JSON.parse(localStorage.getItem("supervisors") || "{}");
   delete users[x];
-  localStorage.setItem("supervisors",JSON.stringify(users));
+  localStorage.setItem("supervisors", JSON.stringify(users));
   loadUsers();
 }
+
 
 /*****************
  SESSION START
 *****************/
 function initSession(){
-  let t=new Date().toLocaleString("en-GB",{hour12:false});
-  document.getElementById("sessionInfo").innerText=`Supervisor: ${window.loggedInUser} | Started: ${t}`;
+  let t = new Date().toLocaleString("en-GB", { hour12:false });
+  document.getElementById("sessionInfo").innerText =
+    `Supervisor: ${window.loggedInUser} | Started: ${t}`;
+
   generateWaterTests();
   generateVillas();
 }
 
+
 /*****************
- WATER TEST
+ WATER TEST FIELDS
 *****************/
 function generateWaterTests(){
-  const areas=["Sula","Cabana","Vivamento","MainPond","KidsGym"];
-  let box=document.getElementById("waterTests");
-  box.innerHTML="";
+  const areas = ["Sula","Cabana","Vivamento","MainPond","KidsGym"];
+  let box = document.getElementById("waterTests");
+  box.innerHTML = "";
+
   areas.forEach(a=>{
-    box.innerHTML+=`
+    box.innerHTML += `
       <label>${a} – pH<input data-id="${a}-ph" type="number"></label>
       <label>${a} – Chlorine<input data-id="${a}-cl" type="number"></label>
       <label>${a} – Issue<input data-id="${a}-issue" type="text"></label>
@@ -261,23 +338,216 @@ function generateWaterTests(){
   });
 }
 
+
 /*****************
- VILLAS
+ VILLAS (10)
 *****************/
 function generateVillas(){
-  let wrap=document.getElementById("villaContainer");
-  wrap.innerHTML="";
+  let wrap = document.getElementById("villaContainer");
+  wrap.innerHTML = "";
+
   for(let i=1;i<=10;i++){
-    wrap.innerHTML+=`
-      <div id='villaBlock${i}' style="border:2px solid #000;padding:12px;border-radius:8px;margin-bottom:15px;">
-        <h3>Villa #${i}</h3>
-        <label>Villa Number:<input id='villaNum${i}' type='text'></label>
-        <label><input id='villaPump${i}' type='checkbox'> Pump Room Clean</label>
-        <label><input id='villaClean${i}' type='checkbox'> Cleaning Verified</label>
+    wrap.innerHTML += `
+      <div id='villaBlock${i}' style="border:2px solid #00A3FF;padding:12px;border-radius:8px;margin-bottom:15px;">
+        <h3 style='color:#004B75;'>Villa #${i}</h3>
+
+        <label>Villa Number:<input id='villaNum${i}' type='text'></label><br>
+
+        <label><input id='villaPump${i}' type='checkbox'> Pump Room Clean</label><br>
+        <label><input id='villaClean${i}' type='checkbox'> Cleaning Verified</label><br>
+
+        <label>Issue Found:<input id='villaIssue${i}' type='text' placeholder='Describe issue if any'></label><br>
+
         <label>Photos:<input id='villaPhoto${i}' type='file' accept='image/*' multiple></label>
       </div>`;
   }
 }
+
+
+/*****************
+ CONFIRM POPUP
+*****************/
+function openConfirm(){ document.getElementById("confirmPopup").style.display='block'; }
+function closeConfirm(){ document.getElementById("confirmPopup").style.display='none'; }
+async function confirmSubmit(){
+  closeConfirm();
+  document.getElementById("loadingScreen").style.display='block';
+  await sendChecklist();
+}
+
+
+/*****************
+ VALIDATION
+*****************/
+function validateGeneral(){
+  let ok = true;
+  let el = document.querySelector('[data-id="staffOnDuty"]');
+  if(!el.value.trim()){
+    el.classList.add("errorField");
+    ok = false;
+  }
+  return ok;
+}
+
+function validateWater(){
+  let ok = true;
+  document.querySelectorAll("input[data-id$='-ph'],input[data-id$='-cl']")
+    .forEach(e=>{
+      if(!e.value.trim()){
+        e.classList.add("errorField");
+        ok=false;
+      } else e.classList.remove("errorField");
+    });
+  return ok;
+}
+
+function validateVillas(){
+  let ok = true;
+  for(let i=1;i<=10;i++){
+    let photos = document.getElementById(`villaPhoto${i}`).files;
+    let block = document.getElementById(`villaBlock${i}`);
+
+    if(photos.length === 0){
+      block.style.border = "2px solid red";
+      ok = false;
+    } else {
+      block.style.border = "2px solid #00A3FF";
+    }
+  }
+  return ok;
+}
+
+
+/*****************
+ FILE → BASE64
+*****************/
+function toBase64(file){
+  return new Promise(resolve=>{
+    let r = new FileReader();
+    r.onload = ()=>resolve(r.result);
+    r.readAsDataURL(file);
+  });
+}
+
+
+/*****************
+ SUBMIT CHECKLIST
+*****************/
+async function sendChecklist(){
+
+  if(!validateGeneral() || !validateWater() || !validateVillas()){
+    alert("Fix highlighted fields");
+    document.getElementById("loadingScreen").style.display="none";
+    return;
+  }
+
+  let now = new Date();
+  let timestamp = now.toLocaleDateString('en-GB') + " " + 
+                  now.toLocaleTimeString('en-GB',{hour12:false});
+
+  let data = {
+    timestamp: timestamp,
+    supervisor: window.loggedInUser,
+
+    // Remarks
+    remarks: document.querySelector('[data-id="remarks"]').value,
+
+    // MAIN AREA CHECKBOXES
+    mainAreas:{
+      sula:document.querySelector('[data-id="area-sula"]').checked,
+      cabana:document.querySelector('[data-id="area-cabana"]').checked,
+      vivamento:document.querySelector('[data-id="area-vivamento"]').checked,
+      mainPond:document.querySelector('[data-id="area-pond"]').checked,
+      kidsGym:document.querySelector('[data-id="area-kids"]').checked
+    },
+
+    // WATER TESTS
+    Sula:{ ph:val('Sula-ph'), cl:val('Sula-cl'), issue:val('Sula-issue') },
+    Cabana:{ ph:val('Cabana-ph'), cl:val('Cabana-cl'), issue:val('Cabana-issue') },
+    Vivamento:{ ph:val('Vivamento-ph'), cl:val('Vivamento-cl'), issue:val('Vivamento-issue') },
+    MainPond:{ ph:val('MainPond-ph'), cl:val('MainPond-cl'), issue:val('MainPond-issue') },
+    KidsGym:{ ph:val('KidsGym-ph'), cl:val('KidsGym-cl'), issue:val('KidsGym-issue') },
+
+    mainAreaPhotos:{}
+  };
+
+  function val(x){ return document.querySelector(`[data-id='${x}']`)?.value || ""; }
+
+  /************************
+   MAIN AREA PHOTOS
+  ************************/
+  async function processAreaPhoto(id,label){
+    let f = document.getElementById(id).files[0];
+    if(!f){ data.mainAreaPhotos[label] = null; return; }
+    let b64 = await toBase64(f);
+    data.mainAreaPhotos[label] = {
+      name:f.name,
+      type:f.type,
+      data:b64.split(',')[1]
+    };
+  }
+
+  await processAreaPhoto("sulaPhoto","sula");
+  await processAreaPhoto("cabanaPhoto","cabana");
+  await processAreaPhoto("vivamentoPhoto","vivamento");
+  await processAreaPhoto("pondPhoto","pond");
+  await processAreaPhoto("kidsPhoto","kids");
+
+  /************************
+     PROCESS VILLAS
+  ************************/
+  for(let i=1;i<=10;i++){
+    data[`villaNum${i}`]   = document.getElementById(`villaNum${i}`).value;
+    data[`villaPump${i}`]  = document.getElementById(`villaPump${i}`).checked;
+    data[`villaClean${i}`] = document.getElementById(`villaClean${i}`).checked;
+    data[`villaIssue${i}`] = document.getElementById(`villaIssue${i}`).value;
+
+    let files = document.getElementById(`villaPhoto${i}`).files;
+    data[`villaPhoto${i}`] = [];
+
+    for(const f of files){
+      let b64 = await toBase64(f);
+      data[`villaPhoto${i}`].push({
+        name:f.name,
+        type:f.type,
+        data:b64.split(',')[1]
+      });
+    }
+  }
+
+  /************************
+       SEND TO BACKEND
+  ************************/
+  const endpoint = "YOUR_EXISTING_ENDPOINT_URL"; 
+  let res = await fetch(endpoint, {
+    method:'POST',
+    body:JSON.stringify(data)
+  });
+
+  let result = await res.json();
+
+  document.getElementById('loadingScreen').style.display='none';
+
+  if(result.status==='success'){
+    window.lastPdfUrl = result.pdfUrl;
+    document.getElementById('viewPdfBtn').style.display='inline-block';
+    document.getElementById('mainForm').style.display='none';
+    document.getElementById('successScreen').style.display='block';
+  } 
+  else {
+    alert("Error submitting report: "+result.message);
+  }
+}
+</script>
+
+</body>
+</html>
+
+
+  
+
+  
+
 
 /*****************
  CONFIRM POPUP
